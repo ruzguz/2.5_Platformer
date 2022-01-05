@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _jumpHeight = 15.0f;
     private float _yVelocity;
+    [SerializeField]
+    private bool _doubleJump = true;
 
 
     // Handlers
@@ -40,13 +42,22 @@ public class Player : MonoBehaviour
 
         if (_controller.isGrounded) 
         {
+            _doubleJump = true;
             if (Input.GetKeyDown(KeyCode.Space)) 
             {
                 _yVelocity = _jumpHeight;
             }
         } else 
         {
-            _yVelocity -= _gravity;
+            if (Input.GetKeyDown(KeyCode.Space) && _doubleJump == true) 
+            {
+                _yVelocity = _jumpHeight;
+                _doubleJump = false;
+            } else 
+            {
+                _yVelocity -= _gravity;
+            } 
+
         }
 
         velocity.y = _yVelocity;
