@@ -16,6 +16,15 @@ public class Player : MonoBehaviour
     [SerializeField]
     private bool _doubleJump = true;
 
+    [SerializeField]
+    private int _coins;
+
+    public int Coins 
+    {
+        set;
+        get;
+    }
+
 
     // Handlers
     private CharacterController _controller;
