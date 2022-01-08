@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -25,6 +26,19 @@ public class Player : MonoBehaviour
         get;
     }
 
+    [SerializeField]
+    private int _lives = 3;
+
+    public int Lives 
+    {
+        set;
+        get;
+    }
+
+    [SerializeField]
+    private float _deathZone = -8;
+    private Vector3 _respawnPosition;
+
 
     // Handlers
     private CharacterController _controller;
@@ -38,6 +52,9 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Character Controller is null");
         }
+
+        UIManager.Instance.UpdateLivesDisplay(_lives);
+        _respawnPosition = transform.position;
     }
 
     // Update is called once per frame
@@ -72,5 +89,20 @@ public class Player : MonoBehaviour
         velocity.y = _yVelocity;
 
         _controller.Move(velocity * Time.deltaTime);
+
+        if (transform.position.y <= _deathZone) 
+        {
+            // Update lives
+            _lives--;
+            UIManager.Instance.UpdateLivesDisplay(_lives);
+            
+            // Respawn Player
+            transform.position = _respawnPosition;
+
+            if (_lives <= 0) 
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+        }
     }
 }

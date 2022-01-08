@@ -24,6 +24,8 @@ public class UIManager : MonoBehaviour
     // Variables
     [SerializeField]
     private Text _coinsDisplay;
+    [SerializeField]
+    private Text _livesDisplay;
 
     void Awake() 
     {
@@ -42,4 +44,10 @@ public class UIManager : MonoBehaviour
     {
         _coinsDisplay.text = "Coins: " + value.ToString();
     }
+
+    public void UpdateLivesDisplay(int lives) 
+    {
+        _livesDisplay.text = "Lives: " + lives.ToString();
+    }
+
 }
