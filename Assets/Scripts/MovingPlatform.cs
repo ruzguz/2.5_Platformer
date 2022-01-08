@@ -24,10 +24,10 @@ public class MovingPlatform : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
 
-        if (transform.childCount > 0) 
+        if (waypoints.Length > 1) 
         {
             // Check for moving platform childs
             Vector3 currentTarget = waypoints[_currentTargetIndex];
@@ -35,7 +35,7 @@ public class MovingPlatform : MonoBehaviour
 
             if (transform.position == currentTarget) 
             {
-                if (_currentTargetIndex == transform.childCount - 1) 
+                if (_currentTargetIndex == waypoints.Length - 1) 
                 {
                     _currentTargetIndex = 0;
                 } else 
@@ -43,6 +43,22 @@ public class MovingPlatform : MonoBehaviour
                     _currentTargetIndex++;
                 }
             }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other) 
+    {
+        if (other.CompareTag("Player")) 
+        {
+            other.transform.parent = this.transform;
+        }
+    }
+
+    private void OnTriggerExit(Collider other) 
+    {
+        if (other.CompareTag("Player")) 
+        {
+            other.transform.parent = null;
         }
     }
 }
