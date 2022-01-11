@@ -22,8 +22,14 @@ public class Player : MonoBehaviour
 
     public int Coins 
     {
-        set;
-        get;
+        set 
+        {
+            _coins = value;
+        }
+        get 
+        {
+            return _coins;
+        }
     }
 
     [SerializeField]
