@@ -16,6 +16,12 @@ public class Player : MonoBehaviour
     private float _yVelocity;
     [SerializeField]
     private bool _doubleJump = true;
+    [SerializeField]
+    private bool _canWallJump = false;
+    private Vector3 _wallJumpDirection;
+    private Vector3 _wallJumpBoost;
+    [SerializeField]
+    private float _wallJumpForce = 5.0f;
 
     [SerializeField]
     private int _coins;
@@ -74,17 +80,32 @@ public class Player : MonoBehaviour
 
         if (_controller.isGrounded) 
         {
+            _wallJumpBoost = Vector3.zero;
+            _canWallJump = false;
             _doubleJump = true;
+
             if (Input.GetKeyDown(KeyCode.Space)) 
             {
                 _yVelocity = _jumpHeight;
             }
         } else 
         {
-            if (Input.GetKeyDown(KeyCode.Space) && _doubleJump == true) 
+            if (Input.GetKeyDown(KeyCode.Space)) 
             {
-                _yVelocity = _jumpHeight;
-                _doubleJump = false;
+                
+                if (_canWallJump ==  true) 
+                {
+                    _yVelocity = _jumpHeight;
+                    _wallJumpBoost = _wallJumpDirection * _wallJumpForce;
+                    _canWallJump = false;
+                    _doubleJump = false;
+                }
+                else if (_doubleJump == true) 
+                {
+                    _yVelocity = _jumpHeight;
+                    _doubleJump = false;
+                }
+                
             } else 
             {
                 _yVelocity -= _gravity;
@@ -93,6 +114,7 @@ public class Player : MonoBehaviour
         }
 
         velocity.y = _yVelocity;
+        velocity += _wallJumpBoost;
 
         _controller.Move(velocity * Time.deltaTime);
 
@@ -109,6 +131,16 @@ public class Player : MonoBehaviour
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
+        }
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit) 
+    {
+        if (_controller.isGrounded == false && hit.transform.tag == "Wall") 
+        {
+            Debug.DrawRay(hit.point, hit.normal, Color.blue);
+            _canWallJump = true;
+            _wallJumpDirection = hit.normal;
         }
     }
 }
