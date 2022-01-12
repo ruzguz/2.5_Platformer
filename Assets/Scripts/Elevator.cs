@@ -43,7 +43,16 @@ public class Elevator : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            other.transform.parent = transform;
             MoveBackward();
+        }
+    }
+
+    private void OnTriggerExit(Collider other) 
+    {
+        if (other.CompareTag("Player")) 
+        {
+            other.transform.parent = null;
         }
     }
 }
