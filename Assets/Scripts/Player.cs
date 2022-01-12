@@ -140,6 +140,7 @@ public class Player : MonoBehaviour
         {
             Debug.DrawRay(hit.point, hit.normal, Color.blue);
             _canWallJump = true;
+            _wallJumpBoost = Vector3.zero;
             _wallJumpDirection = hit.normal;
         }
     }
