@@ -8,14 +8,22 @@ public class Player : MonoBehaviour
 
     // Player variables
     [SerializeField]
+    const float DEFAULT_SPEED = 7.0f;
+    [SerializeField]
     private float _speed = 5.0f;
     [SerializeField]
     private float _gravity = 1.0f;
     [SerializeField]
     private float _jumpHeight = 15.0f;
+    [SerializeField]
+    private float _pushForce = 2f;
+    
+    // Aux Variables
     private float _yVelocity;
     [SerializeField]
     private bool _doubleJump = true;
+    
+    // Wall Jump Variables
     [SerializeField]
     private bool _canWallJump = false;
     private Vector3 _wallJumpDirection;
@@ -23,6 +31,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _wallJumpForce = 5.0f;
 
+    // Game Variables
     [SerializeField]
     private int _coins;
 
@@ -80,9 +89,7 @@ public class Player : MonoBehaviour
 
         if (_controller.isGrounded) 
         {
-            _wallJumpBoost = Vector3.zero;
-            _canWallJump = false;
-            _doubleJump = true;
+            SetWallJumpPhysics(false, true, Vector3.zero, DEFAULT_SPEED);
 
             if (Input.GetKeyDown(KeyCode.Space)) 
             {
@@ -96,9 +103,7 @@ public class Player : MonoBehaviour
                 if (_canWallJump ==  true) 
                 {
                     _yVelocity = _jumpHeight;
-                    _wallJumpBoost = _wallJumpDirection * _wallJumpForce;
-                    _canWallJump = false;
-                    _doubleJump = false;
+                    SetWallJumpPhysics(false, false, _wallJumpDirection * _wallJumpForce, 1.0f);
                 }
                 else if (_doubleJump == true) 
                 {
@@ -136,6 +141,28 @@ public class Player : MonoBehaviour
 
     private void OnControllerColliderHit(ControllerColliderHit hit) 
     {
+
+        Rigidbody body = hit.collider.attachedRigidbody;
+
+        if (hit.transform.tag == "MovingBox") 
+        {
+            if (body == null || body.isKinematic) 
+            {
+                return;
+            }
+
+            if (hit.moveDirection.y < -0.3f) 
+            {
+                return;
+            }
+
+            Vector3 pushDirection = new Vector3(hit.moveDirection.x, 0, 0);
+
+            body.velocity = pushDirection * _pushForce;
+        }
+        
+
+
         if (_controller.isGrounded == false && hit.transform.tag == "Wall") 
         {
             Debug.DrawRay(hit.point, hit.normal, Color.blue);
@@ -143,5 +170,13 @@ public class Player : MonoBehaviour
             _wallJumpBoost = Vector3.zero;
             _wallJumpDirection = hit.normal;
         }
+    }
+
+    private void SetWallJumpPhysics(bool canWallJump, bool doubleJump, Vector3 wallJumpBoost, float speed)
+    {
+        _canWallJump = canWallJump;
+        _doubleJump = doubleJump;
+        _wallJumpBoost = wallJumpBoost;
+        _speed = speed;
     }
 }

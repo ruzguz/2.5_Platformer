@@ -1238,6 +1238,7 @@ MonoBehaviour:
   _speed: 7
   _gravity: 0.5
   _jumpHeight: 20
+  _pushForce: 2
   _doubleJump: 1
   _canWallJump: 0
   _wallJumpForce: 10
